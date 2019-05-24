@@ -19,4 +19,17 @@ We can notice that our problem is equivalent to the following one : \[
     \min\left\{ f(y) + \min\left\{ c^Tx : Ax = b - g(y) \right\} : y \in Y \right\}
 \] Let us denote by $q(y)$ the value of the minimization problem over $x$ : $q(y) = \min\{ c^Tx : Ax = b - g(y) \}$. By duality, the following holds \[
     q(y) = \max\{ (b-g(y))^T\pi : A^T\pi \le c \}
-\]
+\] Note that the feasibility space of the dual does not depend on the values of $y$ and let us apply the decomposition theorem for polyhedra \ref{th:decomposition_polyhedra} on it :
+\begin{align*}
+    &\{ A^T\pi \le c \} = \left\{ \sum_i u^i\alpha_i + \sum_j v^j\beta_j \right\} \\
+    &\sum_i \alpha_i = 1 \quad\textrm{and}\quad \alpha, \beta \ge 0
+\end{align*} where $\{u^i\}_i$ denotes the extreme points of $\{x|Ax\le c\}$ and $\{v^j\}_j$ denotes the extreme rays of the polyhedral cone $\{x|Ax\le 0\}$. Intuitively, the convex combination of the extreme points of $\{x|Ax\le c\}$ defines the optimal solutions (since we know that there exists at least one optimal solution corresponding to an extreme point of the considered polyhedron) while the conical combination of extreme rays of $\{x|Ax\le 0\}$ defines the feasibility region. The following theorem will allow us to reformulate our problem :
+\begin{theorem}
+    Let ($\mathcal P$) be the following problem : \[ \max\{ c^Tx : Ax \le b, x\ge 0 \} \tag{$\mathcal P$} \] Then, ($\mathcal P$) is upper bounded if and only if 
+    \[ c^Tv^j \le 0\quad \forall j=1,...,J \]
+    where $\{v^j\}_{j=1,...,J}$ denotes the set of extreme rays of $\{x|Ax\le 0\}$. 
+\end{theorem}
+\begin{proof}
+$\Rightarrow$ : By contradiction, let us suppose that $(\mathcal P)$ is upper bounded and that there exists $k$ such that $c^Tv^j > 0$. Let us consider a feasible solution to ($\mathcal P$) denoted by $u = z + t$ where $z$ is a convex combination of the extreme points of $\{x|Ax\le b\}$ and $t$ an element of the conical combinations of the extreme rays of $\{x|Ax\le 0\}$. Let $\lambda\in\R_+$. Since $v^k$ is in the conical polyhedra $\{x|Ax\le 0\}$, it holds that $\lambda Av^k\le 0$. Moreover, we have $At\le 0$. Hence, $A(t+\lambda v^k)\le 0$. Now, since $v^k\ge 0$, we have $\lambda v^k\ge 0$ and since $t\ge 0$ it holds that $t+\lambda v^k\ge 0$. This shows that, for any $\lambda$, $z+\lambda v^k$ is a feasible solution for problem ($\mathcal P$). However, its associated objective value is given by $c^Tu + \lambda c^Tv^k\rightarrow +\infty$ when $\lambda\rightarrow+\infty$ since, by assumption, $c^Tv^k\ge 0$. This contradicts the fact that ($\mathcal P$) is upper bounded. \\
+$\Leftarrow$ : Let us consider a solution $u = z + t$ then $c^Tu = c^Tz + \sum_j c^Tv^j\beta_j \le c^Tz$ since $c^Tv^j\le 0, \forall j=1,...,J$. Problem ($\mathcal P$) is therefore upper bounded by $\sum_i \alpha_i \max_i\{ c^Tu^i \}$. 
+\end{proof}

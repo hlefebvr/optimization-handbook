@@ -1,4 +1,25 @@
-\chapter{Convexity}
+\chapter{Convex sets}
+
+\section{Polyhedra}
+
+\subsection{Definitions}
+\begin{definition}[Polyhedron] (plural : polyhedra)
+    \[
+        P = \{ x\in\R^n | Ax\le b \}
+    \]
+\end{definition}
+
+\begin{definition}[Polytope]
+    \[
+        P = \{ x\in\R^n | Ax\le b, u^- \le x \le u^+ \}
+    \]
+\end{definition}
+
+\begin{definition}[Polyhedral cone]
+    \[
+        P = \{ x\in\R^n | Ax \le 0 \}
+    \]
+\end{definition}
 
 \begin{definition}[Minkowski sum]
     Let $A$ and $B$ be two vector spaces, the Minkowki sum is defined as
@@ -33,6 +54,8 @@
 \]
 \end{definition}
 
+\subsection{Theorems}
+
 \begin{theorem}[Affine Minkowski-Weyl]
     Let there be a polytope defined by a set of inequalities, $P = \{ x\in\R^n | Ax\le b \}$. There exists vectors $x_1,...,x_q\in\R^,n$ and $y_1,...,y_r\in\R^n$ such that
     \[
@@ -40,6 +63,10 @@
     \]
 \end{theorem}
 
-\begin{observation}
-    In the affine Minkowki-Weyl theorem, the smallest set of vectors $x_1,...,x_q$ is the set of extreme rays of $P$ and the smallest set of vectors $y_1,...,y_r$ is the set of extreme points of $P$. 
-\end{observation}
+\begin{theorem}[Decomposition theorem for polyhedra]
+    \label{th:decomposition_polyhedra}
+    A set $P$ of vectors in a Euclidean space is a polyhedron if and only if it is the Minkowki sum of a polytope $Q$ and a polyhedral cone $C$. 
+    \[
+        P = Q + C
+    \]
+\end{theorem}

@@ -1,0 +1,44 @@
+\documentclass[twocolumn]{report}
+
+\usepackage[toc,page]{appendix}
+\usepackage{amsmath, amsfonts, amssymb, amsthm}
+\usepackage{tikz}
+\renewcommand\thesection{\arabic{section}}
+\allowdisplaybreaks
+\newtheorem{definition}{Definition}
+\newtheorem{theorem}{Theorem}
+\newtheorem{observation}{Observation}
+
+\newcommand\cone[1]{\textrm{cone}(#1)}
+\newcommand\conv[1]{\textrm{conv}(#1)}
+\newcommand\R{\mathbb R}
+\newcommand\N{\mathbb N}
+\newcommand\Z{\mathbb Z}
+
+\title{Optimization Handbook}
+\author{Henri Lefebvre}
+
+\begin{document}
+    \maketitle
+    \tableofcontents
+
+    \part{Linear Optimization}
+    \input{parts/linear/introduction.tex}
+    \input{parts/linear/duality.tex}
+    \input{parts/linear/simplex.tex}
+    \input{parts/linear/relaxations.tex}
+    \input{parts/linear/branch-and-bound.tex}
+    \input{parts/linear/branch-and-cut.tex}
+    \input{parts/linear/branch-and-price.tex}
+    \input{parts/linear/benders.tex}
+    \input{parts/linear/dantzig-wolfe.tex}
+
+    \part{Non-linear Optimization}
+
+    \begin{appendices}
+        \input{parts/appendix/convexity.tex}
+    \end{appendices}
+
+    \bibliographystyle{abbrv}
+    \bibliography{references} 
+\end{document}

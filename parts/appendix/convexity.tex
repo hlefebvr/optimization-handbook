@@ -1,0 +1,45 @@
+\chapter{Convexity}
+
+\begin{definition}[Minkowski sum]
+    Let $A$ and $B$ be two vector spaces, the Minkowki sum is defined as
+    \[
+        A + B = \{ a + b | a\in A, b\in B \}
+    \]
+\end{definition}
+
+\begin{definition}[Convex combination]
+    Let $x_1,...,x_n$ be a finite set of vectors in a real vector space, a convex combination of these vectors is a vector of the form 
+    \[
+        \sum_{i=1}^n\alpha_ix_i\qquad\textrm{with } \sum_{i=1}^k\alpha_i = 1, \alpha\ge 0
+    \]
+\end{definition}
+
+\begin{definition}[Convex hull]
+    \[
+        \conv{X} = \left\{ \sum_{i=1}^n\alpha_ix_i \middle| x_i\in X, \sum_{i=1}^n\alpha_i = 1, \alpha\ge 0 \right\}
+    \]
+\end{definition}
+
+\begin{definition}[Conical combination]
+    Let $x_1,...,x_n$ be a finite set of vectors in a real vector space, a conical combination of these vectors is a vector of the form 
+    \[
+        \sum_{i=1}^k \alpha_ix_i \qquad\textrm{with } \alpha\ge 0
+    \]
+\end{definition}
+
+\begin{definition}[Conical hull]
+\[
+    \cone{X} = \left\{ \sum_{i=1}^n \alpha_ix_i \middle| x_i\in X, \alpha_i \ge 0 \right \}
+\]
+\end{definition}
+
+\begin{theorem}[Affine Minkowski-Weyl]
+    Let there be a polytope defined by a set of inequalities, $P = \{ x\in\R^n | Ax\le b \}$. There exists vectors $x_1,...,x_q\in\R^,n$ and $y_1,...,y_r\in\R^n$ such that
+    \[
+        P = \cone{x_1,...,x_q} + \conv{y_1,...,y_r}
+    \]
+\end{theorem}
+
+\begin{observation}
+    In the affine Minkowki-Weyl theorem, the smallest set of vectors $x_1,...,x_q$ is the set of extreme rays of $P$ and the smallest set of vectors $y_1,...,y_r$ is the set of extreme points of $P$. 
+\end{observation}

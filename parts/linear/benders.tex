@@ -1,0 +1,22 @@
+\chapter{Benders decomposition}
+
+\section{Introduction}
+
+Benders decomposition is a solution method for solving certain large-scale optimization problems. It is particularly suited for problems in which a set of variables are said to be \textit{complicating} in the sense that fixing them to a given value makes the problem easy. Briefly, the Benders decomposition approach seperates an original problem into several decision stages. A first-stage \textit{master} problem is solved using only a subset of variables, then, the values of the remaining variables are determined by a so-called \textit{subproblem} depending on the first-stage variables. If the master problem's optimal solution yields an infeasible subproblem, a \textit{feasibility cut} is added to the master problem, which is then re-solved. Due to the structure of the reformulation, the Benders algorithm starts with a \textit{restricted master problem} where only a subset of constraints are considered while the others are iteratively added. 
+
+This technique was first introduced in \cite{Benders1962} and has since been generalized to non-linear mixed integer problems. 
+
+\section{Formal derivation}
+
+Consider the following problem :
+\begin{align}
+    \textrm{minimize } & c^Tx + f(y) \\
+    \textrm{s.t. } & Ax + g(y) = b \\
+    & y\in Y, x\ge 0
+\end{align} where variable $y$ is a \textit{complicating constraint}. Note that it may be complicating due to the form of $f$ or $g$ but also by our ability to enforce the constraint $y\in Y$. We assume that fixing $y$ to a given value $\hat y$ turns our problem into an easy-to-solve problem. 
+
+We can notice that our problem is equivalent to the following one : \[
+    \min\left\{ f(y) + \min\left\{ c^Tx : Ax = b - g(y) \right\} : y \in Y \right\}
+\] Let us denote by $q(y)$ the value of the minimization problem over $x$ : $q(y) = \min\{ c^Tx : Ax = b - g(y) \}$. By duality, the following holds \[
+    q(y) = \max\{ (b-g(y))^T\pi : A^T\pi \le c \}
+\]

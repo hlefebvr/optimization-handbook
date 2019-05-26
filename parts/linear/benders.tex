@@ -55,3 +55,60 @@ Theorem \ref{th:upper_bounded_problem_theorem} can be intuitively understood by 
     \caption{Illustration of theorem \ref{th:upper_bounded_problem_theorem}}
     \label{fig:upper_bounded_problem}
 \end{figure}
+
+If we apply theorem \ref{th:upper_bounded_problem_theorem} to our specific problem, we find that a necessary and sufficient condition for $q(y)$ to be upper bounded is that $(b-g(y))^Tv^j\le 0, \forall j=1,...,J$ where $v^j$ denotes an extreme ray of the polyhedron $\{x|Ax\le c\}$ and $J$ a list for their indices. Moreover, we know that there exists at least one optimal solution realised in an extreme point of the feasible region. Therefore, by calling $u^i, i=1,...,I$ the extreme points of the feasible region, the problem of finding the value of $q(y)$ can be reformulated as \[ q(y) = \min\{ q : q \ge (b-g(y))^Tu^i\quad\forall i=1,...,I \} \] Assuming that this problem is bounded. We finally can write our original problem as the following
+\begin{align}
+    \textrm{minimize } & f(y) + q\\
+    \textrm{s.t. } & y\in Y\\
+    & (b-g(y))^Tu^i \le q\quad\forall i=1,...,I \label{eq:optimality_cut}\\
+    & (b-g(y))^Tv^j \le 0\quad\forall j=1,...,J \label{eq:feasibility_cut}
+\end{align} where constraints \ref{eq:optimality_cut} are called \textit{optimality cuts/constraints} since they define the extreme points of the feasible region and constraints \ref{eq:feasibility_cut} are called \textit{feasibility cuts/constraints} since they enforce that the problem is bounded. 
+
+\section{Algorithm}
+
+\subsection{Pseudo code}
+
+It is clear that our final formulation implies an exponential number of constraints since polyhedra typically have an exponential number of extreme points and extreme rays. The idea of the Benders Decomposition Algorithm is to work with a relaxation of the problem where only a limited number of constraints are considered. The algorithm then tries to reach the optimality of the original problem by a \textit{clever} choice of constraints to be added iteratively. The algorithm is presented in \ref{alg:benders}. 
+\begin{algorithm}
+    \caption{Benders Decomposition Algorithm}
+    \label{alg:benders}
+    \begin{description}
+        \item[Step 0] : Find an extreme point of $\{x|Ax\le c, x\ge 0\}$ (e.g., via the phase 1 of the Simplex)\\$1\rightarrow p, 0\rightarrow k$
+        \item[Step 1] : Solve relaxed problem with only $p$ optimality constraints and $k$ feasibility constraints :
+        \begin{align*}
+            \textrm{minimize } & f(y) + q\\
+            \textrm{s.t. } & y\in Y\\
+            & (b-g(y))^Tu^i \le q\quad\forall i=1,...,p\\
+            & (b-g(y))^Tv^j \le 0\quad\forall j=1,...,k
+        \end{align*}
+        Let $\bar y, \bar q$ be the optimal solution thus obtained. 
+        \item[Step 2] : Check the feasible of $(\bar y, \bar q)$ for the original problem by solving \[ q(\bar y) = \max\{ (b-g(y))^T\pi : A^T\pi \le c, \pi\ge 0 \} \]
+        Then,
+        \begin{description}
+            \item[If] $q(\bar y) = +\infty$ : \\
+            The problem is unbounded and, from theorem \ref{th:upper_bounded_problem_theorem}, one can find an extreme ray $v^j$ such that $(b-g(y))^Tv^j > 0$. \\
+            Add feasibility cut to the relaxed problem.\\
+            Increment $k$. \\
+            Got to \textbf{Step 1}.
+            \item[Else] : \\
+            Let $\bar\pi$ be the optimal solution of cost $q(\bar y)$. 
+            \begin{description}
+                \item[If] $\bar q < q(\bar y)$ :\\
+                Add optimality cut $(b-g(y))^T\bar\pi\le q$\\
+                Increment $p$.\\
+                Got to \textbf{Step 1}.
+                \item[Else] :\\
+                The solution is optimal.
+            \end{description}
+        \end{description}
+    \end{description}
+\end{algorithm}
+
+\subsection{Generating a feasibility cut}
+
+In step 2 of algorithm \ref{alg:benders}, it is asked to find an extreme ray such that $(b-g(y))^Tv^j > 0$. A way to do so is to use the Simplex tableau. 
+
+\begin{align*}
+    \textrm{minimize } & (b-f(y))^Tv \\
+    \textrm{s.t. } & A^Tv \ge 0
+\end{align*}

@@ -1,1 +1,142 @@
-\chapter{Introduction}
+\chapter{Introduction to linear programming}
+
+\section{Problems description}
+
+\subsection{Definitions}
+Linear programming (LP) takes interests in problems in which both the objective function and the constraints are linear with respect to the decision variables. The feasible region is therefore composed of linear inequalities or linear equalities. For the sake of generality, we often consider a problem of minimizing a linear objective function subject to equality constraints. Such a problem is said to be in \textit{standard form}. Note that the standard form is only used as a way to present a homogeneous framework for theoretical work. In the following section, we show how any formulated linear program can be reduced to a problem written in standard form.
+
+Some examples of problems which can be formulated in a linear fashion are presented in section \ref{sec:lpb_examples}. Yet, we give here a very simple example for the sake of understanding. This problem will also allow us to have a first geometrical interpretation of some mathematical objects considered in linear programming. 
+
+Let us consider a production plant where two kinds of items are to be produced. Both items are made of two raw matrials $RM_1$ and $RM_2$. Items of type $A$ need $10$ units of $RM_1$ and $4$ units of $RM_2$ while items of type $B$ need $2$ units of $RM_1$ and $4$ units of $RM_2$ to be produced. The problem is to decide how many items of type $A$ and of type $B$ should be produced in the plant, knowing that the raw materials are of fixed amount. Let us assume that we have $50$ units of raw material $RM_1$ and $60$ units of $RM_2$. A so-called \textit{feasible solution} is a decision which satisfies the capacity constraints of the raw materials (i.e., we do not produce more items than we have raw material to do so). A feasible solution is said to be \textit{optimal} if it minimizes or maximizes a certain quantity. Here, we will consider the minimization of the cost. Let us assume that items of type $A$ cost $5$ euros to be produced and that items $B$ cost $4$ euros. The problem can be stated as : 
+\begin{align*}
+    \textrm{minimize } & 3x + 4y\\
+    \textrm{s.t. } & 10x + 4y \le 50\\
+    & 2x + 3y \le 30\\
+    & x\ge 0, y\ge 0
+\end{align*}
+Here, one may argue that the decisions variables $x$ and $y$ need to take integer values. This in fact depends on the context and application of the problem. We will see however that integer linear programming (ILP) problems as well as mixed integer linear programming (MILP) where we have both continuous and integer decision variables are much harder to solve. Yet we will consider quite efficient algorithms to solve such kinds of problems, among which : the branch-and-bound approach and the cutting planes algorithm. 
+
+Since our problem is a two-dimensional problem, in that sense that we have two decision real (or integer) variables to decide, one can plot the \textit{feasible region} of the problem. The feasible region denots the set of feasible solutions. Figure \ref{fig:feasible_region} depicts the feasible region of our problem. 
+
+\begin{figure}[h!]
+    \centering
+    \begin{tikzpicture}[scale=.4, every node/.style={scale=.7}]
+        \fill[gray!20] (0,0) -- (0,7.5) -- (3.75, 5.625) -- (6,0);
+        \draw[<->] (0,16) node[above] {$y$} |- (16,0) node[right] {$x$};
+        \draw[thick] (0,7.5) -- (15,0) node[above=.5cm] {$10x+4y = 50$};
+        \draw[thick] (0,15) node[right] {$2x+4y = 30$} -- (6,0);
+        \draw (2.5,2.5) node {Feasible region};
+    \end{tikzpicture}
+    \caption{2D representation of a feasible region}
+    \label{fig:feasible_region}
+\end{figure}
+
+One should indeed see that above this feasible region stands a plane (or hyperplane in higher dimensions) defining the objective function. Since the objective function is a place, it is clear that the optimal solution can be found in one of the extreme points of the feasible region. This property, in fact, holds in general and is called the \textit{Fundamental theorem of linear programming} and will be formally introduced in section \ref{sec:fonda_th}. 
+
+\subsection{Standard form}
+
+\subsubsection{Formal definition}
+
+% As previously introduced, we give here the formal definition of the standard form for LP problems :
+
+\begin{definition}[Standard form]
+    A linear programming problem is said to be in standard form if it is written as
+    \begin{align*}
+        \textrm{minimize } & c^Tx \\
+        \textrm{s.t. } & Ax = b\\
+        & x\ge 0
+    \end{align*}
+\end{definition}
+
+\subsubsection{Examples}
+
+In this section, we show how we can turn linear problems which are not originally in the standard form to a problem written in standard form.
+
+\paragraph{Negative variables}
+If a given problem uses a negative variable, say $x\le 0$. It suffices to consider the opposite decision variable $\hat x = -x$. The problem is now in standard form. 
+
+\paragraph{Real variables}
+If a given problem uses a free variable (i.e., a variable which can be positive or negative) $x\in\R$. We introduce two positive decision variables $x^+\ge 0$ and $x^-\ge 0$ and write $x$ as $x^+ - x^- \in\R$. The problem is now in standard form. 
+
+\paragraph{Inequality constraints}
+If a given problem defines the feasible region with inequality constraint, so-called \textit{slack} variables can be introduced. Considering an inequality constraint $\sum_j a_jx_j \le b$, we introduce variable $s\ge 0$ so that $\sum_j a_jx_j + s = b$. We do not restrict the values of $s$ (other than by its sign) and do not associate any cost in the objective function. Therefore, the value of $s$ in the optimal solution corresponds to the $b-\sum_j a_jx_j$, hence the name of slack variables. The obtained problem is now in standard form. 
+
+\section{Fundamental Theorem of LP}
+\label{sec:fonda_th}
+
+The fundamental theorem of linear programming as been intuitively introduced in the previous section. We enounce it here formally and prove its validity and geometrical interpretation. First, we introduce the following assumption which will hold in general in the subsequent theorems :
+
+\begin{assumption}[Full rank assumption]
+    \label{ass:full_rank}
+    Considering the feasible region $\{x|Ax = b, x\ge 0\}$ where $A$ is a $m\times n$ matrix. We assume that $\rank{A}=n$
+\end{assumption}
+
+The fundamental theorem of LP characterizes the optimal solutions of a given problem. In that sense, it reduces the search space for optimality. To properly enouce the theorem, we need to introduce the concept of \textit{basic} solutions.
+
+Consider a feasible region defined as \[ \{ x\in\R | Ax = b, x\ge 0 \} \] where $A$ is a $m\times n$-matrix of full rank (see assumption \ref{ass:full_rank}). If we select $n$ linearly independent columns from $A$, then the set of columns represent a basis of $\R^n$. Let us denote by $B$ the matrix corresponding to that basis. Since $B$ is non-singular, the following system can be solved uniquely :
+\[ Bx_B = b \] where $x_B$ is an $m$-dimensional vector. Then, clearly, the vector $x$ defined as $x = [x_B, \textbf 0]$ belongs to the feasible region since $Ax = A[x_B, \textbf 0] = Ax_B + A\textbf 0 = b$. This consideration leads to the following definition :
+
+\begin{definition}[Basic solution]
+    Considering a feasible region $\{x\in\R|Ax=n,x\ge 0\}$ where $A$ is a matrix of full rank.
+    A vector $x$ is said to be basic if and only if there exists a basis $B$ of $\R^n$ composed of $n$ columns of $A$ and $x = [B^{-1}b, \textbf 0]$. If, moreover, it is positive element-wise then it is said to be a feasible basic solution. 
+\end{definition}
+
+We can now enounce the theorem :
+
+\begin{theorem}[Fundamental theorem of linear programming]
+    Consider the following LP problem in standard form :
+    \begin{align*}
+        \textrm{minimize } & c^Tx\\
+        \textrm{s.t. } & Ax = b\\
+        & x \ge 0
+    \end{align*}
+    Then, under the full rank assumption (\ref{ass:full_rank}),
+    \begin{enumerate}[label=(\roman*)]
+        \item if there is a feasible solution, there is a basic feasible solution
+        \item if there is an optimal feasible solution, there is an optimal basic feasible solution.
+    \end{enumerate}
+\end{theorem}
+\begin{proof}\leavevmode
+    \begin{enumerate}[label=(\roman*)]
+        \item
+        \begin{description}
+            \item[$\Rightarrow$] :
+            \item[$\Leftarrow$] : 
+        \end{description}
+        \item
+        \begin{description}
+            \item[$\Rightarrow$] :
+            \item[$\Leftarrow$] : 
+        \end{description}
+    \end{enumerate}
+\end{proof}
+
+\begin{theorem}[Equivalence between basic solutions and extreme points]
+    Considering a matrix $A$ of full rank (see assumption \ref{ass:full_rank}), a vector $x$ is an extreme point of the polyhedron $\{x|Ax=b, x\ge 0\}$ if and only if it is a basic feasible solution.
+\end{theorem}
+\begin{proof}\leavevmode
+    \begin{enumerate}[label=(\roman*)]
+        \item
+        \begin{description}
+            \item[$\Rightarrow$] :
+            \item[$\Leftarrow$] : 
+        \end{description}
+        \item
+        \begin{description}
+            \item[$\Rightarrow$] :
+            \item[$\Leftarrow$] : 
+        \end{description}
+    \end{enumerate}
+\end{proof}
+
+One final remark should be made regarding the definition of a basic solution. Indeed, in general, the coefficients of a basic solution may not be all non-zero. We therfore give the following definition :
+\begin{definition}[Degenerate solution]
+    A basic solution is said to be degenerate if and only if one or more of the basic variables value are zero.
+\end{definition}
+Note that, in presence of degeneracy, ambiguity arises since one could interchange freely the zero-valuated basic variables with non-basic variables.
+
+\section{Examples}
+\label{sec:lpb_examples}
+\subsection{Minimum cost flow problem}
+\subsection{Support Vector Machine}
+\subsection{Knapsack problem}

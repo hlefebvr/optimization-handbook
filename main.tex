@@ -12,15 +12,20 @@
 \newtheorem{definition}{Definition}
 \newtheorem{theorem}{Theorem}
 \newtheorem{observation}{Observation}
+\newtheorem{assumption}{Assumption}
 
 \newcommand\cone[1]{\textrm{cone}(#1)}
 \newcommand\conv[1]{\textrm{conv}(#1)}
+\newcommand\rank[1]{\textrm{rank}(#1)}
 \newcommand\R{\mathbb R}
 \newcommand\N{\mathbb N}
 \newcommand\Z{\mathbb Z}
 
 \title{
-    Optimization Handbook\\\vspace{2cm}
+    \hrule\vspace{.3cm}
+    Optimization Handbook\\
+    \vspace{.3cm}\hrule
+    \vspace{2cm}
     \begin{tikzpicture}
         \draw[<->] (11.1, 0) -| (0,10);
         \draw (0, 9) -- (4, 0);
@@ -47,18 +52,29 @@
     \maketitle
     \tableofcontents
 
+    \setlength\parskip{.2cm}
+
+    \chapter{Introduction to Optimization}
+    \cite{Luenberger73}
+
     \part{Linear Optimization}
     \input{parts/linear/introduction.tex}
-    \input{parts/linear/duality.tex}
     \input{parts/linear/simplex.tex}
-    \input{parts/linear/relaxations.tex}
+    \input{parts/linear/duality.tex}
     \input{parts/linear/branch-and-bound.tex}
     \input{parts/linear/branch-and-cut.tex}
     \input{parts/linear/branch-and-price.tex}
+    \input{parts/linear/relaxations.tex}
     \input{parts/linear/benders.tex}
     \input{parts/linear/dantzig-wolfe.tex}
+    \chapter{Robust optimization}
+    \chapter{Stochastic optimization}
 
     \part{Non-linear Optimization}
+    \chapter{Introduction}
+    \chapter{Descent methods}
+    \chapter{Newton methods}
+    \chapter{Non-differentiable optimization}
 
     \begin{appendices}
         \input{parts/appendix/convexity.tex}

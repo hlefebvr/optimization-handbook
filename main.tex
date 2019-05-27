@@ -4,6 +4,7 @@
 \usepackage{amsmath, amsfonts, amssymb, amsthm}
 \usepackage{algorithm, algpseudocode}
 \usepackage{hyperref}
+\usepackage{enumitem}
 \usepackage{tikz}
 \usetikzlibrary{patterns}
 \renewcommand\thesection{\arabic{section}}
@@ -18,7 +19,28 @@
 \newcommand\N{\mathbb N}
 \newcommand\Z{\mathbb Z}
 
-\title{Optimization Handbook}
+\title{
+    Optimization Handbook\\\vspace{2cm}
+    \begin{tikzpicture}
+        \draw[<->] (11.1, 0) -| (0,10);
+        \draw (0, 9) -- (4, 0);
+        \draw (0, 8) -- (5, 0);
+        \draw (0, 7) -- (6, 0);
+        \draw (0, 6) -- (7, 0);
+        \draw (0, 5) -- (8, 0);
+        \draw (0, 4) -- (9, 0);
+        \draw (0, 3) -- (10, 0);
+        \draw (0, 2) -- (11, 0);
+        \draw (11, 9) -- (7, 0);
+        \draw (11, 8) -- (6, 0);
+        \draw (11, 7) -- (5, 0);
+        \draw (11, 6) -- (4, 0);
+        \draw (11, 5) -- (3, 0);
+        \draw (11, 4) -- (2, 0);
+        \draw (11, 3) -- (1, 0);
+        \draw (11, 2) -- (0, 0);
+    \end{tikzpicture}
+}
 \author{Henri Lefebvre}
 
 \begin{document}

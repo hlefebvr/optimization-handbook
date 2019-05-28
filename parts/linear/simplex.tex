@@ -1,16 +1,81 @@
 \chapter{The Simplex algorithm}
 
+In chapter \ref{chap:lp}, we showed with the fundamental theorem of linear programming that the search space for optimality was reduced indeed to the set of extreme points of the feasible region, or equivalently of basic feasible solutions for the problem. The idea of the Simplex algorithm is to go from one extreme point to another in such a way that the objective function is always improved (i.e., decreases in case of a minimization). By assumption, the considered polyhedron is lower bounded (upper bounded in case of maximization) and therefore, the algorithm reaches the optimal point. The method can be thought of as a travel from an original extreme point to the one which maximizes the objective function. 
+
+The name Simplex comes from the name of the geometrical generalization of triangles to higher dimensions. Its name comes from the idea that it is the "simplest" closed geometrical object in $n$ dimension. 
+
+The first section derives the algorithm formally. Then we explain in more details the geometrical interpretation of the Simplex algorithm. Since the algorithm starts with an initial basic feasible solution, the next section will explain how such a point can be found by using the same Simplex algorithm. In the three last sections, we give the pseudo code of the Revised Simplex algorithm written in matrix form and introduce two variants of the Simplex : (1) the bounded simplex which deals with bounded variables and (2) the transportation Simplex which is used for transportation problems. 
+
 \section{Formal derivation}
 
 \subsection{Assumptions}
+
+For the sake of demonstrations, we introduce the following assumption : 
 \begin{assumption}[Nondegeneracy assumption]
     Every basic feasible solution is a nondegenerate basic
 feasible solution.
 \end{assumption}
 
+\subsection{Pivoting and Gauss reduction}
+
+In this section, we explain how one can move from one basic solution to another with a standard operation from linear algebra called pivoting. This operation is used in Gauss method for solving a system of linear equations. Consider the following set of equations :
+\begin{align*}
+&a_{11}x_1 + a_{12}x_2 + ... + a_{1n}x_n = b_1 \\
+&a_{21}x_1 + a_{22}x_2 + ... + a_{2n}x_n = b_2 \\
+&\vdots \qquad\qquad\qquad\quad\ddots\qquad \vdots \\
+&a_{m1}x_1 + a_{m2}x_2 + ... + a_{mn}x_n = b_m
+\end{align*}
+Of course, it is well known that if $m < n$ and if the equations are not redondant (i.e., they are linearly independent) there is not a unique solution. Yet, following the princple of pivoting from the Gauss elimination technique (see appendix \ref{chap:linear_algebra}) one can turn this system in a so-called \textit{canonical form} expressed as 
+\begin{equation*}
+    \resizebox{\linewidth}{!}{$
+    \begin{array}{ccccccccccccc}
+        x_1 & & & & & + & \overline a_{1(m+1)}x_{m+1} & + & ... & + & \overline a_{1n}x_n & = & \overline b_1 \\
+        & x_2 & & & & + & \overline a_{2(m+1)}x_{m+1} & + & ... & + & \overline a_{2n}x_n & = & \overline b_2 \\
+        & & x_3 & & & + & \overline a_{3(m+1)}x_{m+1} & + & ... & + & \overline a_{3n}x_n & = & \overline b_3 \\
+        & & & \ddots & & \vdots & & & \ddots  & & & \vdots\\
+        & & & & x_m & + & \overline a_{m(m+1)}x_{m+1} & + & ... & + & \overline a_{mn}x_n & = & \overline b_m \\
+    \end{array}
+    $
+    }
+\end{equation*}
+which we often write, for the sake of synthesis, in a so-called \textit{tableau} :
+\begin{equation*}
+    \begin{array}{ccccccccc}
+        x_1 & x_2 & x_3 & ... & x_m & x_{m+1} & ... & x_n \\
+        1 & 0 & 0 & 0 & 0 & \overline a_{1(m+1)} & ... & \overline a_{1n} & \overline b_1 \\
+        0 & 1 & 0 & 0 & 0 & \overline a_{2(m+1)} & ... & \overline a_{2n} & \overline b_2 \\
+        0 & 0 & 1 & 0 & 0 & \overline a_{3(m+1)} & ... & \overline a_{3n} & \overline b_3 \\
+        & & & \ddots & & \vdots & \ddots & & \vdots\\
+        0 & 0 & 0 & 0 & 1 & \overline a_{m(m+1)} & ... & \overline a_{mn} & \overline b_m \\
+    \end{array}
+\end{equation*} It is clear that if one posesses a system of equations written in cannonical form, then the solution given by $x = (\overline b_1, \overline b_2, ..., \overline b_m, 0, 0, ...., 0)$ is a basic solution. The idea of the Simplex algorithm is, in fact, to pivot from one canonical form to another. The question however is how to select the variable which will enter the basis and which one will leave the basis in order to increase a given objective function. This is deatailed in the following sub-sections. 
+
 \subsection{Vector leaving the basis}
 
+In this section, we show how one can decide which variable should leave the basis. In fact, in the previous section, we showed that the pivot operation allows us to move from a basic solution to another, however, such a move does not guarantee the feasibility of the obtained basic solution. In other words, it is not established that the pivot operation will keep the positivity of the variables. We present here a sufficient condition for the pivot operation to keep the feasibility property when moving from one basic solution to another. 
+
+Let $x$ be a basic solution. We have \[ a_1x_1 + a_2x_2 + ... + a_mx_m = b \] where $x_i>0, \forall i = 1...m$ (nondegeneracy assumption). And suppose that we want to bring $x_q$ in the basis. The question is how to choose which variable has to leave the basis in order to keep feasibility of the new basic solution. For that purpose, let us write $a_q$ in terms of the current basis : \[ a_q = \lambda_1 a_1 + \lambda_2 a_2 + ... + \lambda_m a_m \] From the two above equalities, we derive the following : {\small \[ (x_1 - \varepsilon \lambda_1)a_1 + (x_2 - \varepsilon\lambda_2)a_2 + ... + (x_m - \varepsilon\lambda_m)x_m + \varepsilon a_q = b \]} for any $\varepsilon > 0$, which is a linear combination of at most $m+1$ vectors. Setting $\varepsilon = 0$ yields the current basic feasible solution. As $\varepsilon$ increases, the coefficient of $a_q$ increases. Yet, it yields a non basic variable, in general. The coefficients of the other vectors may increase or decrease with $\varepsilon$ depending on the original coefficients (i.e., if we have $\lambda_i > 0$). Therefore, by taking the first value of $\varepsilon$ which makes vanishing such a vector, we ensure the feasibility of the obtained new basic solution. Formally, we choose $\varepsilon$ such that : 
+\[ \varepsilon = \min\{ x_i/\lambda_i : \lambda_i > 0 \} \] If the minimum is achieved by more than one variable, the new basic feasible solution is degenerate. If, however, none of the $\lambda_i$ are positive, this means that all the coefficients increase as $\varepsilon$ increases, without restriction, while keeping feasibility. This corresponds to a case where the polyhedron is unbounded. 
+
 \subsection{Vector entering the basis}
+
+In the previous section, we have shown how to choose which variable had to leave in order to keep feasibility when we want to insert a given variable in the basis. In that sense, it allows us to travel from one basic solution to another while keeping feasibility. In this section, we show how to choose which variable should enter the basis in order to increase a given objective function. For that purpose, consider the following objective function : \[ c^Tx = c_1x_1 + c_2x_2 + ... + c_nx_n \] And consider a feasible basic solution $\hat x = [\hat x_B, 0]$. Its objective value is given by \[ c_1\hat x_1 + c_2\hat x_2 + ... + c_m\hat x_m \] The key idea here, is to express the objective function value of a general solution $x$ in terms of the objective value of the basic solution $\hat x$. This can be achieved by solving the following system for $x_{m+1},...,x_n$ :
+\begin{align*}
+    x_1 &= \overline b_1 - \sum_{j=m+1}^p \overline a_{1j}x_j \\
+    x_2 &= \overline b_2 - \sum_{j=m+1}^p \overline a_{2j}x_j \\
+    \vdots & \qquad\qquad \vdots \\
+    x_m &= \overline b_m - \sum_{j=m+1}^p \overline a_{mj}x_j \\
+\end{align*} Doing so, we obtain that \[ c^Tx = \underbrace{\sum_{j=1}^m c_jx_j}_{c^T\hat x_B} + \sum_{j=m+1}^n (c_{j} - z_{j})x_j \] where \[ z_j = \sum_{i=1}^m \overline a_{ij}c_i \] This result gives us a condition for a vector to benifically enter the basis. Indeed, if, for a given variable $j$, we have $c_j - z_j < 0$ then it means that increasing the value of $x_j$ from zero to a positive value will decrease the objective function. Hence, going from the solution $\hat x$ to another solution which includes $x_j > 0$ will yield a lower value of the objective. 
+
+We now can state the two following theorems : 
+\begin{theorem}
+    Given a non-degenerate basic feasible solution with corresponding objective value $z_0$. If there exist a column such that $c_j - z_j < 0$, then there is a feasible solution with objective value $z < z_0$. If the column $\overline a_j$ can be substituted for some vector in the original basis to yield a feasible basic solution, then this solution will have an objective value $z < z_0$. If, however, $\overline a_j$ cannot be substituted to yield a basic feasible solution, the problem is unbounded and the optimal solution tends to minus infinity. 
+\end{theorem}
+\begin{theorem}[Optimality condition]
+    If, for some basic feasible solution, $c_j - z_j\ge 0$ for all $j$, then the solution is optimal. 
+\end{theorem}
+
+We introduce the standard notation $r_j = c_j - z_j$. These coefficients are called \textit{reduced cost} or \textit{relative costs} since they measure the cost of a variable respectively to a given basis. We can interpret these numbers as the gain we would obtain to use a real variable $x_j$ instead of the linear combination giving $x_j = \sum_{j=1}^m \overline a_j x_j $. Another interpretation is to see the reduced cost as the amount by which the objective cost would have to decrease (for minimization problems) in order to make the entrance of a column profitable. 
 
 \section{Geometrical Interpretation}
 
@@ -25,6 +90,9 @@ feasible solution.
 \subsubsection{Degenerate solution}
 \subsubsection{Unbounded problem}
 \subsubsection{Infeasible problem}
+\subsubsection{Computing a reduced cost}
+
+This section shows how to compute a reduced cost from a given Simplex tableau. 
 
 \section{The revised Simplex}
 \subsection{Matrix form of the Simplex}

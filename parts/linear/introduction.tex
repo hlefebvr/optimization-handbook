@@ -20,11 +20,11 @@ Since our problem is a two-dimensional problem, in that sense that we have two d
 
 \begin{figure}[h!]
     \centering
-    \begin{tikzpicture}[scale=.4, every node/.style={scale=.7}]
+    \begin{tikzpicture}[scale=.35, every node/.style={scale=.5}]
         \fill[gray!20] (0,0) -- (0,7.5) -- (3.75, 5.625) -- (6,0);
         \draw[<->] (0,16) node[above] {$y$} |- (16,0) node[right] {$x$};
-        \draw[thick] (0,7.5) -- (15,0) node[above=.5cm] {$10x+4y = 50$};
-        \draw[thick] (0,15) node[right] {$2x+4y = 30$} -- (6,0);
+        \draw (0,7.5) -- (15,0) node[above=.5cm] {$10x+4y = 50$};
+        \draw (0,15) node[right] {$2x+4y = 30$} -- (6,0);
         \draw (2.5,2.5) node {Feasible region};
     \end{tikzpicture}
     \caption{2D representation of a feasible region}
@@ -84,6 +84,7 @@ Consider a feasible region defined as \[ \{ x\in\R | Ax = b, x\ge 0 \} \] where 
 We can now enounce the theorem :
 
 \begin{theorem}[Fundamental theorem of linear programming]
+    \label{th:fundamental}
     Consider the following LP problem in standard form :
     \begin{align*}
         \textrm{minimize } & c^Tx\\
@@ -98,35 +99,47 @@ We can now enounce the theorem :
 \end{theorem}
 \begin{proof}\leavevmode
     \begin{enumerate}[label=(\roman*)]
-        \item
+        \item Let $x$ be a feasible solution and let us denote by $a_1,...,a_n$ the columns of $A$. Since it is feasible, the following holds : \[ a_1x_1 + ... + a_nx_n = b \] Assume now that exactely $p$ variables $x_i$ are greater than zero. For the sake of exposure, we'll assume that they correspond to the $p$ first variables. That is : \[ a_1x_1 + ... + a_px_p = b \] Then two different situations may occur : 
         \begin{description}
-            \item[$\Rightarrow$] :
-            \item[$\Leftarrow$] : 
+            \item[$(a_1,...,a_p)$ are linearly independent] : then clearly we have $p\le m$. If $p=m$, then $x$ is a basic feasible solution and the proof is complete. If $p<m$ then since $A$ is of full rank, one can find $m-p$ columns of $A$ which forms a basis when added to the $p$ columns $a_1,...,a_p$. By setting $x_i = 0$ for all $i>p$, we obtain a (degenerate) basic feasible solution. 
+            \item[$(a_1,...,a_p)$ are linearly dependent] :
+            Then there exists coefficients $\lambda_i,...,\lambda_p$ all non-zero, at least one of which can be assumed to be positive, such that \[ a_1\lambda_1 + ... + a_p\lambda_p = 0 \] Let $\varepsilon\in\R$, Since $Ax = b$ holds, it also holds that \begin{equation} (x_1 - \varepsilon\lambda_1)a_1 + ... + (x_p-\varepsilon\lambda_p)a_p = b \label{eq:built_solution} \end{equation} For $\varepsilon = 0$, this reduces to the original feasible solution. As $\varepsilon$ increases, the different components may increase, decrease or remain constant depending on the sign of $\lambda_i$. Since we assumed that at least one $\lambda_i$ is positive, then at least one component will decrease as $\varepsilon$ increases. We increase $\varepsilon$ to the first point where one or more components become zero. That is, we choose \[ \varepsilon = \min\{ x_i/\lambda_i : \lambda_i > 0 \} \] For this specific value, the solution built in \ref{eq:built_solution} is feasible and has at most $p-1$ positive variables. Repeating this process as much as necessary, we can eliminate positive variables untill we obtain a feasible solution with corresponding columns which are linearly dependent. 
         \end{description}
-        \item
-        \begin{description}
-            \item[$\Rightarrow$] :
-            \item[$\Leftarrow$] : 
-        \end{description}
+        \item Let us consider an optimal solution $x^*$ and, as in proof of $(i)$, let us suppose that there are exactely $p$ positive variables. Again, two cases may occure as to whether the selected columns of $A$ are linearly dependent or not. If the columns are independent, the proof goes as for $(i)$. If they are dependent, we still can apply the idea of the proof of $(ii)$ yet we need to check that the objective value of $x^* - \varepsilon \lambda$ remains optimal. Note that the objective value of the constructed solution is \[ c^Tx^* + \varepsilon c^T\lambda \] By contradiction, suppose that $c^T\lambda\ne 0$. Then one can find a sufficiently small value for $\varepsilon$ so that $c^Tx^* + \varepsilon c^T\lambda < c^Tx^*$ which contradicts the optimality of $x^*$. Hence, $c^Ty = 0$ and the obtained solution is optimal. 
     \end{enumerate}
 \end{proof}
+
+Before stating an equivalence result previously mentioned between basic variables and extreme points of polyhedra, let us take a small detour with a geometrical example of the idea of the proof of theorem \ref{th:fundamental}, point \textit{(i)}. For that purpose, let us consider the following feasible region : \[ K = \left\{ x\in\R^3_+ \middle| \begin{array}{ll} x_1 + x_2 + x_3 &= 1 \\ x_2 + x_3 &= \frac 23 \end{array} \right\} \] $K$ is depicted in figure \ref{fig:3d_feasible}. As well, a (non-basic) feasible point is depicted with coordinates $(\frac 13, \frac 13, \frac 13)$. Indeed, one can easily check that \[ \frac 13 \begin{pmatrix} 1\\ 1 \end{pmatrix} + \frac 13 \begin{pmatrix} 1\\ 0 \end{pmatrix} + \frac 13 \begin{pmatrix} 1\\1 \end{pmatrix} = \begin{pmatrix} 1\\\frac 23 \end{pmatrix} \] Yet, clearly, this collection of vectors are linear dependent, in particular we have : \[ 1 \begin{pmatrix} 1\\ 1 \end{pmatrix} + 0 \begin{pmatrix} 1\\ 0 \end{pmatrix} + (-1) \begin{pmatrix} 1\\1 \end{pmatrix} = \begin{pmatrix} 0\\ 0 \end{pmatrix} \] From the two above equations, we obtain by multiplying the second one by a scalar $\varepsilon>0$ and subtracting the first one : \[ \left(\frac 13 - \varepsilon\right) \begin{pmatrix} 1\\ 1 \end{pmatrix} + \frac 13 \begin{pmatrix} 1\\ 0 \end{pmatrix} + \left(\frac 13 + \varepsilon\right) \begin{pmatrix} 1\\1 \end{pmatrix} = \begin{pmatrix} 1\\\frac 23 \end{pmatrix} \] If we choose $\varepsilon = \frac 13$ (i.e., $\min\{ x_i/\lambda_i : \lambda_i > 0 \}$), we find that $x = (0,\frac 23, \frac 13)$ is also a feasible solution and it has one coefficient set to zero. Since we have two constraints ($m=2$), this solution is a basic solution (also depicted in figure \ref{fig:3d_feasible}).
+
+\begin{figure}[h!]
+    \centering
+    \begin{tikzpicture}[scale=.8]
+        \draw[<->] (0, 4) node[above] {$x_1$} |- (4, 0) node[right] {$x_2$};
+        \draw[->] (0,0) -- (-2, -2) node[below] {$x_3$};
+        \draw[fill=gray!25, opacity=.6] (8/3,.8) -- (4*2/3,0) -- (-1.1,-1.1) -- (-1.1,-.2);
+        \draw[fill=gray!10, opacity=.6] (-1.5,-1.5) -- (0,3.5) -- (3.5,0) -- cycle;
+        \draw[opacity=.6] (8/3,.8) -- (-1.1,-.2);
+        \fill[black] (.7,.3) circle (1.5pt) node[scale=.8, below=.1cm] {$\left(\frac 13,\frac 13,\frac 13\right)$};
+        \fill[black] (-1.1,-.2) circle (1.5pt) node[scale=.8, above=.1cm] {$\left(0,\frac 23, \frac 13\right)$};
+    \end{tikzpicture}
+    \caption{3D representation of feasible region $K$}
+    \label{fig:3d_feasible}
+\end{figure}
+
+We can see that our basic feasible solution is indeed an extreme point of the polytope $K$. The following theorem states that this remark holds in general. 
 
 \begin{theorem}[Equivalence between basic solutions and extreme points]
     Considering a matrix $A$ of full rank (see assumption \ref{ass:full_rank}), a vector $x$ is an extreme point of the polyhedron $\{x|Ax=b, x\ge 0\}$ if and only if it is a basic feasible solution.
 \end{theorem}
 \begin{proof}\leavevmode
-    \begin{enumerate}[label=(\roman*)]
-        \item
-        \begin{description}
-            \item[$\Rightarrow$] :
-            \item[$\Leftarrow$] : 
-        \end{description}
-        \item
-        \begin{description}
-            \item[$\Rightarrow$] :
-            \item[$\Leftarrow$] : 
-        \end{description}
-    \end{enumerate}
+    \begin{description}
+        \item[$\Rightarrow$] : Let $x$ be a basic feasible solution for $\{ x | Ax = b, x\le 0 \}$ where $A$ is a $m\times n$ matrix. We have \[ a_1x_1 + ... + a_mx_m = b \] By contradiction, let us suppose that there exists two different points $y,z\in\{x|Ax=b,x\ge 0\}$ such that $x$ is a convex combination of these points, i.e., : \[ x = \alpha y + (1 - \alpha) z \quad 0<\alpha<1 \] Since $x\ge 0$ and $\alpha$ is positive, it holds that the last $n-m$ components of $y$ and $z$ are also equal to zero. Thus :
+        \begin{align*} 
+            y_1a_1 + ... + y_ma_m = b\\
+            z_1a_1 + ... + z_ma_m = b
+        \end{align*} Yet since $a_1,...,a_m$ are linearly independent, it follows that $x=y=z$ which contradicts that $y\ne z$. Hence, $x$ is an extreme point.
+        \item[$\Leftarrow$] : Let $x$ be an extreme point of $\{ x | Ax = b, x\ge 0 \}$ and let us assume that the nonzero components of $x$ are the first $k$ components, i.e., \[ a_1x_1 + .... + a_kx_k = b \] Let us show that $a_1,...,a_k$ are linearly independent (i.e., that $x$ is a basic feasible solution). By contradiction, suppose that $a_1,...,a_k$ are linearly dependent. Then, there exists a vector $\lambda \ge 0$ with at least one non-zero coefficient such that \[ \lambda_1a_1 + ... + \lambda_ka_k = 0 \] Since $x\ge 0$, one can find a value for $\varepsilon$ such that \[ x + \varepsilon\lambda\ge 0\quad x-\varepsilon\lambda \ge 0 \] Yet, if this were the case, it would holds that $x = \frac 12 (x + \varepsilon\lambda) + \frac 12(x-\varepsilon\lambda)$ which is a convex combination of two distinct feasible points. This contradicts the fact that $x$ is an exterme point. Hence, $x$ is a basic feasible solution. 
+    \end{description}
 \end{proof}
 
 One final remark should be made regarding the definition of a basic solution. Indeed, in general, the coefficients of a basic solution may not be all non-zero. We therfore give the following definition :
@@ -134,6 +147,10 @@ One final remark should be made regarding the definition of a basic solution. In
     A basic solution is said to be degenerate if and only if one or more of the basic variables value are zero.
 \end{definition}
 Note that, in presence of degeneracy, ambiguity arises since one could interchange freely the zero-valuated basic variables with non-basic variables.
+
+\begin{observation}
+    The fundamental theorem of linear programming reduces the search space for optimality to the set of extreme points of the feasible region. Yet, note that for a problem with $n$ variables and $m$ constraints, we have at most \[ \begin{pmatrix} n\\ m \end{pmatrix} = \frac{n!}{m!(n-m)!} \] extreme points (or equivalently, basic solutions). 
+\end{observation}
 
 \section{Examples}
 \label{sec:lpb_examples}

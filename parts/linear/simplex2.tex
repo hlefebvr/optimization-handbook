@@ -1,16 +1,65 @@
 \chapter{The Simplex algorithm (2)}
 
+In this chapter, we present two variants of the Simplex algorithm. The first variant is the so-called \textit{Revised Simplex Algorithm} which is a more efficient version of the Simplex in practise from a computational point of view. The \textit{Bounded Simplex} is then introduced as a way to solve problems in which some variables are upper bounded without introducing an explicit constraint. Examples for both variants are discussed. 
+
 \section{The revised Simplex}
 \subsection{Matrix form of the Simplex}
+
+We present here, the matrix formulation of the original Simplex method. First, note that the tableau from the original Simplex is solely characterized by the variables included in the current basis. In that sense, knowing the basic variables implies being able to compute the associated tableau. We consider the matrix constraint $A$ and denote by $B$ the matrix formed by the columns of $B$ corresponding to the basic variables. Again, we assume that they correspond to the first $m$ columns for the sake of notation. $C$ will denote the remaining $n-m$ columns aggregated in a matrix. Thus, we have :
+\[ A = [A, B] \]
+\[ x = [x_B, x_C] \qquad c^T = [c_B^T, c_D^T] \]
+
+Using these notations, a problem written in standard form becomes :
+\begin{align*}
+    \textrm{minimize } & c_B^Tx_B + c_D^Tx_D\\
+    \textrm{s.t. } & Bx_B + Dx_D = b\\
+    & x_B, x_D\ge 0
+\end{align*}
+
+The basic solution $x$ which corresponds to the basis $B$ is given by $x = (x_B, 0)$ where we have $x_B = B^{-1}b$, obtained by setting $x_D = 0$. In general, however, the following result holds : 
+\[ x_B = B^{-1}b - B^{-1}Dx_D \] which gives the expression of the objective function to be
+\begin{align*}
+    z &= c^T_B(B^{-1}b - B^{-1}Dx_D) + c_D^Tx_D\\
+    &= c^T_BB^{-1}b + ( c_D^T - c_B^TB^{-1}D )x_D
+\end{align*}
+which gives the matricial expression for the reduced costs : \[ r_D^T = c_D^T - c_B^TB^{-1}D \]
+Therefore, the initial tableau is given by : 
+\[
+    \begin{array}{cc|c}
+        B & D & b\\\hline
+        c^T_B & c^T_D & 0
+    \end{array} \longrightarrow
+    \begin{array}{cc|c}
+        I & B^{-1}D & B^{-1}b\\\hline
+        0 & c^T_D - c^T_BB^{-1}D & -c_B^TB^{-1}b
+    \end{array}
+\]
+
 \subsection{Pseudo-code}
+
+Even though the Simplex is of exponential complexity, experience has how an average polynomial complexity in $\mathcal O(m)$. To that extent, pivoting can be regarded as an operation which is not done "that often". However, if we consider cases where $n >> m$, pivoting implies computing numerous coefficient which in turn may be useless. The Revised Simplex method avoids these useless computations. It is given in \ref{alg:revised_simplex}. It starts with a given feasible basis $B$. 
+
+\begin{algorithm}[h!]
+    \caption{Revised Simplex Algorithm}
+    \label{alg:revised_simplex}
+    \begin{description}
+        \item[Step 1] : Compute the reduced costs $r_D^T = c^T_D - c_B^TB^{-1}D$ by computing $y^T = c_B^TB^{-1}$ then $r_D^T = c_D^T - y^TD$. If $r_D\ge 0$, STOP. The current solution $B^{-1}b$ is optimal.
+        \item[Step 2] : Determine which variable $x_q$ enters the basis by using the pivot rule of your choice (e.g., most negative reduced cost). Compute $\overline a_q = B^{-1}a_q$ which gives column $a_q$ in terms of the current basis.
+        \item[Step 3] : Compute $p = \textrm{argmin}\{ \overline b / \overline a_{iq} : \overline a_{iq} > 0 \}$. $p$ will leaves the basis. If no $\overline a_{iq} > 0$, STOP. The problem is unbounded. 
+        \item[Step 4] : Update $B^{-1}$. Return to \textbf{Step 1}. 
+    \end{description}
+\end{algorithm}
+
+Updating $B^{-1}$ is done through the usual pivot operations on $[B^{-1}, \overline a_q]$. 
+
+Interstingly enough, it is not necessary to know $B^{-1}$ thoughout the Simplex itations. In fact, we do need to solve linear systems with $B$ as coefficient matrix. An $LU$-decomposition of $B$ can be used to fasten the resolution (see appendix \ref{chap:linear_algebra} for details on $LU$-decomposition).
+
 \subsection{Examples}
+
+TODO
 
 \section{The bounded Simplex}
 \subsection{Formal derivation}
 \subsection{Pseudo-code}
-\subsection{Examples}
-
-\section{The transportation Simplex}
-\subsection{Formal derivation}
-\subsection{Pseudo-code}
+\subsection{Pre-processing}
 \subsection{Examples}

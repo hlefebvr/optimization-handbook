@@ -29,19 +29,19 @@ Of course, it is well known that if $m < n$ and if the equations are not redonda
 \begin{equation*}
     \resizebox{\linewidth}{!}{$
     \begin{array}{ccccccccccccc}
-        x_1 & & & & & + & \overline a_{1(m+1)}x_{m+1} & + & ... & + & \overline a_{1n}x_n & = & \overline b_1 \\
-        & x_2 & & & & + & \overline a_{2(m+1)}x_{m+1} & + & ... & + & \overline a_{2n}x_n & = & \overline b_2 \\
-        & & x_3 & & & + & \overline a_{3(m+1)}x_{m+1} & + & ... & + & \overline a_{3n}x_n & = & \overline b_3 \\
-        & & & \ddots & & \vdots & & & \ddots  & & & \vdots\\
-        & & & & x_m & + & \overline a_{m(m+1)}x_{m+1} & + & ... & + & \overline a_{mn}x_n & = & \overline b_m \\
+        x_1 & + & \overline a_{1(m+1)}x_{m+1} & + & ... & + & \overline a_{1n}x_n & = & \overline b_1 \\
+        x_2 & + & \overline a_{2(m+1)}x_{m+1} & + & ... & + & \overline a_{2n}x_n & = & \overline b_2 \\
+        x_3 & + & \overline a_{3(m+1)}x_{m+1} & + & ... & + & \overline a_{3n}x_n & = & \overline b_3 \\
+        \vdots & & \vdots & & & \ddots  & & & \vdots\\
+        x_m & + & \overline a_{m(m+1)}x_{m+1} & + & ... & + & \overline a_{mn}x_n & = & \overline b_m \\
     \end{array}
     $
     }
 \end{equation*}
 which we often write, for the sake of synthesis, in a so-called \textit{tableau} :
 \begin{equation*}
-    \begin{array}{ccccccccc}
-        x_1 & x_2 & x_3 & ... & x_m & x_{m+1} & ... & x_n \\
+    \begin{array}{cccccccc|c}
+        x_1 & x_2 & x_3 & ... & x_m & x_{m+1} & ... & x_n \\\hline
         1 & 0 & 0 & 0 & 0 & \overline a_{1(m+1)} & ... & \overline a_{1n} & \overline b_1 \\
         0 & 1 & 0 & 0 & 0 & \overline a_{2(m+1)} & ... & \overline a_{2n} & \overline b_2 \\
         0 & 0 & 1 & 0 & 0 & \overline a_{3(m+1)} & ... & \overline a_{3n} & \overline b_3 \\
@@ -52,10 +52,27 @@ which we often write, for the sake of synthesis, in a so-called \textit{tableau}
 
 \subsection{Vector leaving the basis}
 
+\subsubsection{First approach}
+
 In this section, we show how one can decide which variable should leave the basis. In fact, in the previous section, we showed that the pivot operation allows us to move from a basic solution to another, however, such a move does not guarantee the feasibility of the obtained basic solution. In other words, it is not established that the pivot operation will keep the positivity of the variables. We present here a sufficient condition for the pivot operation to keep the feasibility property when moving from one basic solution to another. 
 
 Let $x$ be a basic solution. We have \[ a_1x_1 + a_2x_2 + ... + a_mx_m = b \] where $x_i>0, \forall i = 1...m$ (nondegeneracy assumption). And suppose that we want to bring $x_q$ in the basis. The question is how to choose which variable has to leave the basis in order to keep feasibility of the new basic solution. For that purpose, let us write $a_q$ in terms of the current basis : \[ a_q = \lambda_1 a_1 + \lambda_2 a_2 + ... + \lambda_m a_m \] From the two above equalities, we derive the following : {\small \[ (x_1 - \varepsilon \lambda_1)a_1 + (x_2 - \varepsilon\lambda_2)a_2 + ... + (x_m - \varepsilon\lambda_m)x_m + \varepsilon a_q = b \]} for any $\varepsilon > 0$, which is a linear combination of at most $m+1$ vectors. Setting $\varepsilon = 0$ yields the current basic feasible solution. As $\varepsilon$ increases, the coefficient of $a_q$ increases. Yet, it yields a non basic variable, in general. The coefficients of the other vectors may increase or decrease with $\varepsilon$ depending on the original coefficients (i.e., if we have $\lambda_i > 0$). Therefore, by taking the first value of $\varepsilon$ which makes vanishing such a vector, we ensure the feasibility of the obtained new basic solution. Formally, we choose $\varepsilon$ such that : 
 \[ \varepsilon = \min\{ x_i/\lambda_i : \lambda_i > 0 \} \] If the minimum is achieved by more than one variable, the new basic feasible solution is degenerate. If, however, none of the $\lambda_i$ are positive, this means that all the coefficients increase as $\varepsilon$ increases, without restriction, while keeping feasibility. This corresponds to a case where the polyhedron is unbounded. 
+
+\subsubsection{Alternative approach}
+
+Another approach for reaching the same result is to consider a problem in standard form and to notice that we can always write a basic feasbile solution like so : 
+\[ \overline b_i - \sum_{j=m}^{n} \overline a_{ij}x_j \ge 0 \qquad\forall i = 1,...,m \]
+We want to increase a non-basic variable $x_q$ while keeping feasibility. Also, we'd like to increase $x_q$ as much as we can. That is, we keep the other non-basic solutions to zero. This yields :
+\[ \overline b_i \ge \overline a_{ij}x_q\qquad\forall i=1,...,m \]
+Thus, it follows that :
+\[
+    \begin{cases}
+        \dfrac{\overline b_i}{\overline a_{ij}} \ge x_q & \forall i = 1,...,m | \overline a_{ij} > 0\\
+        \dfrac{\overline b_i}{\overline a_{ij}} \le x_q & \forall i = 1,...,m | \overline a_{ij} < 0\\
+    \end{cases}
+\]
+Note that when $\overline a_{ij} < 0$, no upper bound on $x_q$ can be derived. Hence, when all the $a_{ij}$ coefficients are negative, the problem is unbounded. On the contrary, when at least one coeeficient is negative, we do have a constraint on $x_q$ and to ensure feasibility with respect to all the constraints, one should increase $x_q$ by \[ \min\left\{ \frac{\overline b_j}{\overline a_{ij}} : \overline a_{ij} > 0 \right\} \] which implies setting $x_k$ to zero where $k$ denotes the argmin of the above finite minimum. We get is the same result as in the first approach. 
 
 \subsection{Vector entering the basis}
 
@@ -107,7 +124,6 @@ The Simplex method takes as input a feasible basic solution. We assume that we s
 \begin{table}[h!]
     \centering
     \begin{tabular}{ccccccc|cc}
-        \hline
         $x_1$ & $x_2$ & $...$ & $x_m$ & $x_{m+1}$ & $...$ & $x_n$ & $b$ \\\hline
         1 & 0 & $...$ & 0 & $\overline a_{1(m+1)}$ & $...$ & $\overline a_{1n}$ & $\overline b_1$\\
         0 & 1 & $...$ & 0 & $\overline a_{2(m+1)}$ & $...$ & $\overline a_{2n}$ & $\overline b_2$\\
@@ -134,18 +150,166 @@ Regarding the last row of the tableau, we may interpret it as $z$ being an extra
     \end{description}
 \end{algorithm}
 
-\subsection{Degeneracy}
+
+\section{Degeneracy}
+
+Running the Simplex algorithm, it is possible to find degenerate basic feasible solutions. In most cases, these degenerate solutions can be handled in the same way as any basic feasible variable. Yet, in some situations, it is that, having a current degenerate feasible basic solution, one computes the variable to enter the basis and the associated minimum ratio to be zero. In this case, a zero valued basic variable will enter the basis while not improving the objective function. In this case, it may occur that the Simplex enters in an infinite cycle, going from one degenerate solution to another degenerate solution. 
+
+This section is devoted to the study of such cases. First, we give an example of Simplex cycling, then, give some pivot rules to avoid cycling.
+
+\subsection{Example}
+
+TODO
+
+\subsection{Pivot Rules}
+\subsubsection{Dantzig's Rule}
+\subsubsection{Bland's Rule}
+\subsubsection{Steepest-edge rule}
+\subsubsection{Approximate steepest-edge rule}
+\subsubsection{Partial pricing}
+
+TODO
+
 \subsection{Examples}
 \subsubsection{Optimal solution}
 
-Let us consider the...
+Le us consider the following problem :
+\begin{align*}
+    \textrm{maximize } & x_1 + x_2\\
+    \textrm{s.t. } & 4x_1 + x_2 \le 20\\
+    & x_1 + 2x_2 \le 11\\
+    & x_1, x_2\ge 0
+\end{align*}
+The first step to do is to write this problem in standard form by introducing two slack variables $s_1$ and $s_2$ and to turn this maximization problem into a minimization problem like so :
+\begin{align*}
+    \textrm{minimize } & -x_1 - x_2\\
+    \textrm{s.t. } & 4x_1 + x_2 + s_1 = 20\\
+    & x_1 + 2x_2 + s_2 = 11\\
+    & x_1, x_2, s_1, s_2\ge 0
+\end{align*}
+This gives us a good Simplex Tableau to start with. Indeed, the slack variables already form a basis to start with and setting $s_1 = 20$ and $s_2 = 11$ is a basic feasible solution. The initial tableau is :
+\begin{center}
+    \begin{tabular}{cccc|c}
+        $x_1$ & $x_2$ & $s_1$ & $s_2$ & $b$ \\\hline
+        4 & 1 & 1 & 0 & 20\\
+        1 & 2 & 0 & 1 & 11\\\hline
+        -1 & -1 & 0 & 0 & 0
+    \end{tabular}
+\end{center}
+Where we see that variables $x_1$ and $x_2$ are elligeable to enter the basis (i.e., have negative reduced costs). We'll use the "most negative reduced cost" rule for pivoting, i.e., the variable which leaves the basis corresponds to the one having the most negative reduced cost. In our case, both negative-reduced-cost variables have a reduced cost of $-1$. We arbitraly use $x_2$. Then, we compute the ratios for positive values of the column $\overline b_i / \overline a_{i2}$. The minimum one is $\min(20/1 ; 11/2) = 5.5$ and is reached in the second row. Thus, $s_2$ exits the basis. After pivoting on $2,2$, the resulting tableau is :
+\begin{center}
+    \begin{tabular}{cccc|c}
+        $x_1$ & $x_2$ & $s_1$ & $s_2$ & $b$ \\\hline
+        $\frac 72$ & 0 & 1 & $-\frac 12$ & $\frac{29}2$\\
+        $\frac 12$ & 1 & 0 & $\frac 12$ & $\frac{11}2$\\\hline
+        $-\frac 12$ & 0 & 0 & $\frac 12$ & $\frac{11}2$
+    \end{tabular}
+\end{center}
+Here, only variable $x_1$ has a negative reduced cost. Thus, $x_1$ will enter the basis. Naturally, $s_1$ will leave the basis since $\min(\frac{29}{2}/\frac{7}2 ; \frac{11}2/\frac 12) = \frac{29}7$. This leads to the following table :
+\begin{center}
+    \begin{tabular}{cccc|c}
+        $x_1$ & $x_2$ & $s_1$ & $s_2$ & $b$ \\\hline
+        1 & 0 & $\frac 27$ & $-\frac 17$ & $\frac{29}7$\\
+        0 & 1 & $-\frac 17$ & $\frac 47$ & $\frac{24}7$\\\hline
+        0 & 0 & $\frac 17$ & $\frac 37$ & $\frac{53}7$
+    \end{tabular}
+\end{center}
+Here, every non basic reduced cost are positive, the Simplex algorithm terminates and the solution is optimal. Figure \ref{fig:simplex_step} depicts the travel made by the Simplex algorithm throughout its execution. The initial basic solution is $(0,0)$, then goes to $(0,11/2)$ and finally reaches the optimal solution $(29/7,24/7)$.
 
-\subsubsection{Degenerate solution}
+\begin{figure}[h!]
+    \begin{tikzpicture}[scale = .9]
+        \draw[<->] (0,6) |- (7.5,0);
+        \draw (3.5,6) -- (5,0) node[above left, rotate=-75, scale = .8] {$4x+y = 20$};
+        \draw (7,2) node[scale = .8, rotate=-26, above left] {$x_1+2x_2=11$} -- (0,5.5);
+        \fill (0,0) circle (2pt) node[above right, scale = .8] {1};
+        \fill (0,5.5) circle (2pt) node[above right, scale = .8] {2};
+        \fill (29/7,24/7) circle (2pt) node[above right, scale = .8] {$3^*$};
+        \draw[thick] (.5, 1) edge[->] (.5, 2);
+        \draw[thick] (1, 4.5) edge[->] (2, 4);
+
+        \draw[dotted] (1,0) -- (0,1) node[left, scale=.8] {$z = 1$};
+        \draw[dotted] (3,0) -- (0,3) node[left, scale=.8] {$z = 3$};
+        \draw[dotted] (5,0) -- (0,5) node[left, scale=.8] {$z = 5$};
+        \draw[dotted] (7,0) -- (1,6) node[left, scale=.8] {$z = 7$};
+    \end{tikzpicture}
+    \caption{Example of Simplex moves}
+    \label{fig:simplex_step}
+\end{figure}
+
 \subsubsection{Unbounded problem}
-\subsubsection{Infeasible problem}
+
+In this section, we consider the optimization problem stated below. It is our intention that the problem is unbounded, i.e., its optimal solution goes to infinity. The goal of this example is to show how the Simplex algorithm terminates in such situations and what are the informations which are still usable in such cases. Consider the following :
+\begin{align*}
+    \textrm{maximize } & 2x_1 + x_2\\
+    \textrm{s.t. } & 2x_1 - x_2 \ge -5\\
+    & x_1 - x_2 \le 2\\
+    & x_1, x_2\ge 0
+\end{align*}
+Clearly, the feasible region is unbounded as it can be seen in figure \ref{fig:unbounded_simplex}. Note that the Simplex works even with unbounded polyhedron and is able to compute optimal solution in such cases. The specificty of this problem is that the plane defining the objective function is "oriented" (i.e., is increasing) towards the unbounded direction. In chapter \ref{chap:benders}, we give a sufficient condition for a problem to be bounded implying the extreme rays of a polyhedron. In this case, the objective function and the extreme rays of the feasible region are oriented in the same direction. 
+
+\begin{figure}[h!]
+    \centering
+    \begin{tikzpicture}[scale=.8, every node/.style={scale = .7}]
+        \fill[gray!10] (1.5, 8) -- (0,5) -- (0,0) -- (2,0) -- (7,5) -- (7,8);
+        \draw (0,5) circle (1pt) node[below right, rotate = 62] {$-5 = 2x_1 - x_2$} -- (1.5, 8);
+        \draw (0,0) circle (1pt);
+        \draw (2,0) circle (1pt) node[above right, rotate = 45] {$x_1 - x_2 = 2$} -- (7,5);
+        \draw[<->] (0,8) node[above] {$x_2$} |- (7,0) node[below right] {$x_1$};
+        \draw[dotted] (0,3) -- (1.5,0) node[right, rotate = -60] {$z = 3$};
+        \draw[dotted] (0,7) -- (3.5,0) node[right, rotate = -60] {$z = 7$};
+        \draw[dotted] (1.5,8) -- (5.5,0) node[right, rotate = -60] {$z = 11$};
+        \draw[dotted] (3.5,8) -- (7,1) node[right, rotate = -60] {$z = 15$};
+    \end{tikzpicture}
+    \caption{Unbounded feasible region}
+    \label{fig:unbounded_simplex}
+\end{figure}
+
+First, let us write the considered problem in standard form by introducing the slack variables and turning the maximization problem into a minimization problem, this gives :
+\begin{align*}
+    \textrm{minimize } & -2x_1 - x_2\\
+    \textrm{s.t. } & -2x_1 + x_2 + s_1 = 5\\
+    & x_1 - x_2 + s_2 = 2\\
+    & x_1, x_2, s_1, s_2\ge 0
+\end{align*}
+We introduce the Simplex tableau of this problem : 
+\begin{center}
+    \begin{tabular}{cccc|c}
+        $x_1$ & $x_2$ & $s_1$ & $s_2$ & $b$ \\\hline
+        -2 & 1 & 1 & 0 & 5\\
+        1 & -1 & 0 & 1 & 2\\\hline
+        -2 & -1 & 0 & 0 & 0
+    \end{tabular}
+\end{center} Looking at the most negative reduced cost, we determine that $x_1$ will enter the basis and by, computing the minimum ratios, that $s_2$ will leave the basis. We get : \begin{center}
+    \begin{tabular}{cccc|c}
+        $x_1$ & $x_2$ & $s_1$ & $s_2$ & $b$ \\\hline
+        0 & -1 & 1 & 2 & 9\\
+        1 & -1 & 0 & 1 & 2\\\hline
+        0 & -3 & 0 & 2 & 2
+    \end{tabular}
+\end{center} Again, looking at the most negative reduced cost, we can see that $x_2$ should enter the basis. However, there are no positive coefficient in that row. This means that we can increase $x_2$ as much as we want while keeping feasibility (i.e., there are no feasibility restrictions). Thus, we conclude that the problem is unbounded. Yet, how can we interpret the vector $(-1, -1)^T$ returned by the Simplex ? Answer : it is the opposite direction an the extreme ray of the feasible region. 
+\[ d = \begin{pmatrix} 1\\ 1 \end{pmatrix} \]
+
 \subsubsection{Reduced costs}
 \paragraph{Computation}
-This section shows how to compute a reduced cost from a given Simplex tableau. 
+In this section, we suppose having a canonical tableau of the problem from the first example : 
+\begin{center}
+    \begin{tabular}{cccc|c}
+        $x_1$ & $x_2$ & $s_1$ & $s_2$ & $b$ \\\hline
+        $\frac 72$ & 0 & 1 & $-\frac 12$ & $\frac{29}2$\\
+        $\frac 12$ & 1 & 0 & $\frac 12$ & $\frac{11}2$\\
+        % $-\frac 12$ & 0 & 0 & $\frac 12$ & $\frac{11}2$
+    \end{tabular}
+\end{center} where the reduced costs are missing. We show by example how to compute the reduced costs. 
+
+First, note that $(s_1, x_2)$ is a basis of $\R^2$ ($m = 2$). Thus, the associated reduced costs are $0$. Concerning the non-basic variables, we can compute the reduced costs using the formula $r_j = c_j - z_j$ where $z_j = \sum_{i=1}^m \overline a_{ij}c_i$. We recall here the objective function : $c^Tx = -x_1 - x_2$. Therefore, we have :
+{\small \begin{align*}
+    r_{x_1} &= -1 - \sum_{i=1}^m \overline a_{i1}c_i = -1 - \left( \frac 72\times 0 + \frac 12 \times -1 \right)\\
+    &= -\frac 12\\
+    r_{s_2} &= 0 - \sum_{i=1}^m \overline a_{i1}c_i = 0 - \left( -\frac 12\times 0 + \frac 12 \times -1 \right)\\
+    &= \frac 12
+\end{align*}}
+Finally, we easily compute the objective value :  {\small \[ z = c^Tx = -1 \times 0 + (-1) \times \frac{11}2 + 0 \times \frac{29}2 + 0\times 0 = -\frac{11}{2} \]}
+
 \paragraph{Interpreation}
 In this short example, we show the interpretation of the reduced costs as the increase in the variable's objective cost necessary to make the entrance of the variable in the basis profitable. Indeed, consider the (very dumb) following problem :
 \begin{align*}
@@ -162,13 +326,13 @@ First, let us write this problem in standard form by turning the maximization in
 \end{align*} The feasible region of the problem is depicted in figure \ref{fig:feasible_reduced} in the top plot as well as the levels of the objective function. We can easily see that the optimal solution (marked by a $*$ in the plot) is $(1,0)$. Let us run the Simplex algorithm for that problem :
 \begin{center}
     \begin{tabular}{ccc|c}
-        $x_1$ & $x_2$ & $s$ \\
+        $x_1$ & $x_2$ & $s$ \\\hline
         1 & 1 & 1 & 1\\\hline
         -4 & -1 & 0 & 0
     \end{tabular}
     $\rightarrow$
     \begin{tabular}{ccc|c}
-        $x_1$ & $x_2$ & $s$ \\
+        $x_1$ & $x_2$ & $s$ \\\hline
         1 & 1 & 1 & 1\\\hline
         0 & 3 & 4 & 4
     \end{tabular}

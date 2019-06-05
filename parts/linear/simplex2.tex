@@ -59,7 +59,23 @@ Interstingly enough, it is not necessary to know $B^{-1}$ thoughout the Simplex 
 TODO
 
 \section{The bounded Simplex}
+
+In this section, we present a variant of the Simplex algorihtm used when the problem contains bounded variables. Formally, we take interest in problems of the form : 
+\begin{align*}
+    \textrm{minimize } & c^Tx \\
+    \textrm{s.t. } & Ax = b\\
+    & l_i \le x_i \le u_i \textrm{ for some }i\\
+    & x \ge 0
+\end{align*}
+
+The idea of the bounded Simplex is to tweak the Simplex algorithm in order to \textit{disregard} the bound constraints from the general computations. These constraints will be directly embedded within the algorithm. 
+
 \subsection{Formal derivation}
 \subsection{Pseudo-code}
 \subsection{Pre-processing}
+\subsection{Examples}
+
+\section{The Network Simplex}
+\subsection{Formal derivation}
+\subsection{Pseudo-code}
 \subsection{Examples}

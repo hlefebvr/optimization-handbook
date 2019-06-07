@@ -110,6 +110,10 @@ It is clear that our final formulation implies an exponential number of constrai
 
 In \textbf{Step 2} of algorithm \ref{alg:benders}, it is asked to find an extreme ray such that $(b-g(y))^Tv^j > 0$, i.e., a direction in which the problem is unbouned. A way to do that is to use the Simplex Tableau. Indeed, if a problem is unbounded, this implies that there exists a variable whose reduced cost is positive (i.e., ready to enter the basis) while the associated column is composed of postive terms (i.e., no constraint bounds its value). The associated column is in fact an extreme ray of the polyhedron. 
 
+\section{Examples}
+
+// Graphical representation
+
 \section{Stabilisation methods}
 
 \subsection{Bundle methods}
@@ -130,10 +134,153 @@ In this section, we take interest in a generalization of the Benders decompositi
     \item $f(x,y)$ and $g(x,y)$ are convex-in-$x$ over $X$
 \end{enumerate}
 
+It was first introduced in \cite{Geoffrion1972}. The main aspects of the demonstrations are given in this section. 
+
 Again, we can write the \textit{projection} on the $y$-variable space, thus obtaining : 
 \[
     \min\left\{ \inf\{ f(x,y) : g(x,y)\le 0, x\in X \} : y \in Y \right\}
-\] and let us denote by $h(y)$ the minimization problem over $x$, i.e., 
+\] where we use the convention that $\inf\{ h(x) : x\in A \} = +\infty$ if $A=\emptyset$. 
+
+Let us denote by $v(y)$ the minimization problem over $x$, i.e., 
 \[
-    h(y) = \inf\{ f(x,y) : g(x,y)\le 0, x\in X \}
-\]
+    v(y) = \inf\{ f(x,y) : g(x,y)\le 0, x\in X \}
+\] And note that $v(y)$ is considered easy to solve (by definition of $y$ as being complicating variables). Also, we will consider the following set corresponding to the feasible values of $y$ allowing one or more feasible values for $x$ : 
+\[
+    Y\cap V = Y\cap\left\{ y \middle| \exists x\in X, g(x, y)\le 0 \right\}
+\] which turns our problem into : \[ \min\left\{ v(y) : y \in Y\cap V \right\} \] without needing any sort of convention on the infimum operator whatsoever. 
+
+The development of the generalized Benders decomposition now depends on our ability to describe $v(y)$ and $V$, and on our ability to check the feasibility/optimality of a solution. The first two points are solved with the two following theorems :
+\begin{theorem}[$V$-representation]
+    Let $X$ be a non-empty convex set and $G$ be an $n$-dimensional convex-in-$x$ function for all $y\in Y$. If $\{ z\in\R^n | g(x, y)\le z \forall x\in X \}$ is closed for all $y\in Y$, then, for any $y\in Y$,
+    \[ y\in V \Leftrightarrow \inf\{ \lambda^Tg(x,y) : x\in X \} \le 0, \forall\lambda\in\Lambda \]
+    with $\Lambda = \left\{ \lambda\in\R^n | \sum_{i=1}^n\lambda_i = 1, \lambda \ge 0 \right\}$
+\end{theorem}
+\begin{proof}
+\leavevmode
+\begin{description}
+    \item[$\Rightarrow$] : if $y\in V$ then, by definition, there exists an $x\in X$ such that $g(x,y)\le 0$ and therefore $\inf\{ \lambda^Tg(x,y) : x\in X \} \le 0, \forall\lambda\in\Lambda$. 
+    \item[$\Leftarrow$] : if $\inf\{ \lambda^Tg(x,y) : x\in X \} \le 0, \forall\lambda\in\Lambda$ then \[ \sup\{ \inf\{ \lambda^Tg(x,y) \} : \lambda\in\Lambda \} \le 0 \] which implies, since the scaling of $\lambda\in\Lambda$ does not influence the sign of the quantity of which we take the supremum, that  \[ \sup\{ \inf\{ \lambda^Tg(x,y) \} : \lambda> 0 \} \le 0 \]
+    And therefore, \[ \sup\{ \inf\{ \lambda^Tg(x,y) \} : \lambda\ge 0 \} = 0 \] 
+    Which is equivalent to saying that the dual of the following primal problem has an optimal value of zero : 
+    \begin{align*}
+        \textrm{minimize } & 0^Tx\\
+        \textrm{s.t. } & g(x, y) \le 0\\
+        & x\in X
+    \end{align*}
+    The set $\{ z\in\R^n | g(x, y)\le z \forall x\in X \}$ being a closed set is a sufficient condition for the primal problem to have a feasible solution. Hence, the fact that $y\in V$
+\end{description}
+\end{proof}
+\begin{observation}
+    We give here some sufficient conditions for $\{ z\in\R^n | g(x, y)\le z \forall x\in X \}$ to be closed for any $y\in Y$ :
+    \begin{itemize}
+        \item $X$ is closed and bounded and $g_i(x,y)$ are continuous over $X$ for all $y\in Y$
+        \item TODO
+    \end{itemize}
+\end{observation}
+
+The problem can therefore be written as 
+\begin{align*}
+    \textrm{minimize } & h(y) \\
+    \textrm{s.t. } & \inf_{x\in X}\{ \lambda^Tg(x, y) \} \le 0\quad \forall \lambda\in\Lambda\\
+    & y\in Y
+\end{align*}
+
+The following theorem then reformulates problem $v(y)$ :
+
+\begin{theorem}[$v(y)$-representation]
+    Let $X$ be a non-empty convex set and assume that $f(x,y)$ and $g_i(x,y)$ are convex-in-$x$ over $X$ for any fixed $y\in Y$. Suppose also that for any $y\in Y\cap V$, the following holds :
+    \begin{itemize}
+        \item $h(y)$ is finite
+        \item there exist optimal multipliers for the problem defining $v(y)$
+    \end{itemize}
+    Then, for any $y\in Y\cap V$, the primal problem defining $v(y)$ has the same optimal value as its dual :
+    \[ \sup_{u\ge 0}\{ \inf_{x\in X} f(x, y) + u^Tg(x,y) \} \]
+\end{theorem}
+\begin{proof}
+    See Lagrangian duality.
+\end{proof}
+
+The problem can now be stated, by introducing a new variable $y_0$, as
+\begin{align*}
+    \textrm{minimize } & y_0\\
+    \textrm{s.t. } & \sup_{u\ge 0}\{ \inf_{x\in X} f(x, y) + u^Tg(x,y) \} = y_0\\
+    & \inf_{x\in X}\{ \lambda^Tg(x, y) \} \le 0\quad \forall \lambda\in\Lambda\\
+    & y\in Y
+\end{align*}
+
+And, by definition of the $\sup$ operator, as
+\begin{align*}
+    \textrm{minimize } & y_0\\
+    \textrm{s.t. } & \inf_{x\in X} f(x, y) + u^Tg(x,y) \le y_0 & \forall u\ge 0\\
+    & \inf_{x\in X}\{ \lambda^Tg(x, y) \} \le 0 & \forall \lambda\in\Lambda\\
+    & y\in Y
+\end{align*}
+
+A simple way to solve this problem is through relaxation. We need, however, to be able to recognise situations in which the optimal solution is found or, in the contrary, to generate cuts. 
+
+Now, note that the following so-called \textit{sub-problem} is easy to solve for a fixed value of $y = \bar y$ : 
+\begin{align*}
+    h(\bar y) = 
+    \textrm{minimize } & f(x, \bar y)\\
+    \textrm{s.t. } & g(x, \bar y) \le 0\\
+    & x\in X
+\end{align*}
+For which three different situations can occur :
+\begin{enumerate}
+    \item The problem has a finite optimal value and $h(\bar y) \le y_0$ then $\bar y, y_0$ is an optimal solution of the original problem
+    \item The problem has a finite optimal value and $h(\bar y) > y_0$ then, we can use an optimal vector $\bar u$ of the sub-problem and generate a new constraint 
+    \[ \inf_{x\in X}\{ f(x,y) + \bar u^Tg(x,y) \le y_0 \} \]
+    \item The sub-problem is not feasible, implying that $y\notin V$ and that one constraint 
+    \[ \inf_{x\in X}\{ \lambda^Tg(x, y) \} \le 0 \]
+    is violated for a given $\lambda$. Add the violated constraint. 
+\end{enumerate}
+
+\subsection{Pseudo-code}
+
+We give in algorithm \ref{alg:generalized_benders}
+
+\begin{algorithm}[h!]
+    \caption{Generalized Benders Decomposition}
+    \label{alg:generalized_benders}
+    \begin{description}
+        \item[Init] : Let $\bar y\in Y\cap V$. Find an optimal solution $\bar x$ to the sub-problem \begin{align*}
+            h(\bar y) = 
+            \textrm{minimize } & f(x, \bar y)\\
+            \textrm{s.t. } & g(x, \bar y) \le 0\\
+            & x\in X
+        \end{align*} as well as an optimal multiplier $\bar u$\\
+        Assign $1\rightarrow p$ and $0\rightarrow q$ and define the first relaxed problem with constraint \[ \inf_{x\in X}\{ f(x,y) + \bar u^T g(x,y) \} \le y_0 \] Also set $f(\bar x, \bar y)\rightarrow UB$ and a tolerance $\varepsilon$
+        \item[Step 1] : Solve the relaxed problem 
+        \begin{align*}
+            \textrm{min. } & y_0\\
+            \textrm{s.t. } & \inf_{x\in X}\{ f(x,y) + {u^j}^Tg(x,y) \} \le y_0 & j = 1...p\\
+            & \inf_{x\in X}\{ {\lambda^j}^Tg(x,y) \} \le 0 & j = 1...q\\
+            & y\in Y
+        \end{align*}
+        Let $\bar y,\bar y_0$ be an optimal solution to the relaxed problem. \\
+        \textbf{If} $UB - \bar y_0 \le \varepsilon$, STOP. The solution is $\varepsilon$-optimal
+    \end{description}
+\end{algorithm}
+
+\begin{algorithm}[h!]
+    \begin{description}
+        \item[Step 2] : Solve the sub-problem sub-problem \begin{align*}
+            h(\bar y) = 
+            \textrm{minimize } & f(x, \bar y)\\
+            \textrm{s.t. } & g(x, \bar y) \le 0\\
+            & x\in X
+        \end{align*}
+        \begin{description}
+            \item[If] the sub-problem is infeasible, find $\bar\lambda\in\Lambda$ such that \[ \inf_{ x\in X }\{ \bar \lambda^Tg(x,y) \} > 0 \] Increment $q$ and introduce the constraint \[ \inf_{ x\in X }\{ \bar \lambda^Tg(x,y) \} \le 0 \] in the relaxed problem then go to \textbf{Step 1}.
+            \item[Else if], there exists optimal solution to the sub-problem $\bar x$ such that $f(\bar x, \bar y) - \bar y_0 > \varepsilon$, then find an optimal multipler $\bar u$. Increment $p$ and add the following constraint to the relaxed problem :
+            \[ \inf_{x\in X}\{ f(x,y) + \bar{u}^Tg(x,y) \} \le y_0 \] 
+            Set $\min(UB, f(\bar x, \bar y))\rightarrow UB$, go to \textbf{Step 1}.
+            \item[Else if], there exists optimal solution to the sub-problem $\bar x$ such that $f(\bar x, \bar y) - \bar y_0 \le \varepsilon$, then STOP. $\bar x, \bar y$ is a $\varepsilon$-optimal. 
+        \end{description} 
+    \end{description}
+\end{algorithm}
+
+\subsection{Examples}
+\subsubsection{Toy bilinear problem}
+
+\subsubsection{Two-stage Stochastic problme with recourse}
